@@ -1,0 +1,390 @@
+menu "Hardware Drivers Config"
+
+config SOC_STM32F103RC
+    bool
+    select SOC_SERIES_STM32F1
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    default y
+
+menu "Onboard Peripheral Drivers"
+
+    config BSP_USING_USB_TO_USART
+        bool "Enable USB TO USART (uart4)"
+        select BSP_USING_UART
+        select BSP_USING_UART4
+        default y
+	
+    menuconfig BSP_USING_RS485
+        bool "RS485 Use UART"
+        depends on BSP_USING_UART
+        if BSP_USING_RS485
+            config BSP_USING_RS485_UART_NAME
+            string "RS485 Use UART Device Name"
+            default "uart1"
+
+            config BSP_USING_RS485_UART_BAUD
+            int "RS485 Use UART Device Baudrate"
+            default 9600
+
+            config BSP_USING_RS485_UART_BUFFER
+            int "RS485 Use UART Device Buffer Size"
+            default 32
+        endif
+    
+    menuconfig USING_TINY_MODBUS_RTU
+        bool "Use TinyModbusRTU"
+        depends on BSP_USING_UART
+        if USING_TINY_MODBUS_RTU
+            config USING_TINY_MODBUS_RTU_CMD
+                bool "Use TinyModbusRTU Command in FinSH"
+                default n
+        endif
+
+    menuconfig BSP_USING_SPI_FLASH
+        bool "Enable SPI FLASH (W25Q16 spi1)"
+        select BSP_USING_SPI
+        select BSP_USING_SPI1
+        select RT_USING_SFUD
+        select RT_SFUD_USING_SFDP
+        default n
+        if BSP_USING_SPI_FLASH
+            config BSP_SPI_FLASH_DEVICE_NAME
+                string "SPI FLASH Device Name"
+                default "spi10"
+
+            config BSP_SFUD_DEVICE_NAME
+                string "SFUD Device Name"
+                default "W25Q16"
+            
+            config BSP_SPI_FLASH_MOUNT
+                string "SPI FLASH Mount Point"
+                default "/"
+        endif
+endmenu
+
+menu "On-chip Peripheral Drivers"
+
+    config BSP_USING_GPIO
+        bool "Enable GPIO"
+        select RT_USING_PIN
+        default y
+
+    menuconfig BSP_USING_UART
+        bool "Enable UART"
+        default y
+        select RT_USING_SERIAL
+        if BSP_USING_UART
+            config BSP_USING_UART1
+                bool "Enable UART1"
+                default n
+
+            config BSP_UART1_RX_USING_DMA
+                bool "Enable UART1 RX DMA"
+                depends on BSP_USING_UART1 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_UART1_TX_USING_DMA
+                bool "Enable UART1 TX DMA"
+                depends on BSP_USING_UART1 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_USING_UART2
+                bool "Enable UART2"
+                default n
+
+            config BSP_UART2_RX_USING_DMA
+                bool "Enable UART2 RX DMA"
+                depends on BSP_USING_UART2 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_UART2_TX_USING_DMA
+                bool "Enable UART2 TX DMA"
+                depends on BSP_USING_UART2 && RT_SERIAL_USING_DMA
+                default n
+				
+            config BSP_USING_UART3
+                bool "Enable UART3"
+                default n
+
+            config BSP_UART3_RX_USING_DMA
+                bool "Enable UART3 RX DMA"
+                depends on BSP_USING_UART3 && RT_SERIAL_USING_DMA
+                default n  
+
+            config BSP_UART3_TX_USING_DMA
+                bool "Enable UART3 TX DMA"
+                depends on BSP_USING_UART3 && RT_SERIAL_USING_DMA
+                default n 
+
+			config BSP_USING_UART4
+                bool "Enable UART4"
+                default y
+
+            config BSP_UART4_RX_USING_DMA
+                bool "Enable UART4 RX DMA"
+                depends on BSP_USING_UART4 && RT_SERIAL_USING_DMA
+                default n  
+
+            config BSP_UART4_TX_USING_DMA
+                bool "Enable UART4 TX DMA"
+                depends on BSP_USING_UART4 && RT_SERIAL_USING_DMA
+                default n 
+        endif    
+
+    menuconfig BSP_USING_TIM
+        bool "Enable timer"
+        default n
+        select RT_USING_HWTIMER
+        if BSP_USING_TIM
+            config BSP_USING_TIM2
+                bool "Enable TIM2"
+                default n
+
+            config BSP_USING_TIM3
+                bool "Enable TIM3"
+                default n
+
+            config BSP_USING_TIM4
+                bool "Enable TIM4"
+                default n
+        endif
+
+    menuconfig BSP_USING_PWM
+        bool "Enable pwm"
+        default n
+        select RT_USING_PWM
+        if BSP_USING_PWM
+        menuconfig BSP_USING_PWM3
+            bool "Enable timer3 output pwm"
+            default n
+            if BSP_USING_PWM3
+                config BSP_USING_PWM3_CH1
+                    bool "Enable PWM3 channel1"
+                    default n
+
+                config BSP_USING_PWM3_CH2
+                    bool "Enable PWM3 channel2"
+                    default n
+            endif
+        endif
+	
+    menuconfig BSP_USING_SPI
+        bool "Enable SPI BUS"
+        default n
+        select RT_USING_SPI
+        if BSP_USING_SPI
+            config BSP_USING_SPI1
+                bool "Enable SPI1 BUS"
+                default n
+
+            config BSP_SPI1_TX_USING_DMA
+                bool "Enable SPI1 TX DMA"
+                depends on BSP_USING_SPI1
+                default n
+                        
+            config BSP_SPI1_RX_USING_DMA
+                bool "Enable SPI1 RX DMA"
+                depends on BSP_USING_SPI1
+                select BSP_SPI1_TX_USING_DMA
+                default n
+
+            config BSP_USING_SPI2
+                bool "Enable SPI2 BUS"
+                default n  
+                        
+            config BSP_SPI2_TX_USING_DMA
+                bool "Enable SPI2 TX DMA"
+                depends on BSP_USING_SPI2
+                default n
+                        
+            config BSP_SPI2_RX_USING_DMA
+                bool "Enable SPI2 RX DMA"
+                depends on BSP_USING_SPI2
+                select BSP_SPI2_TX_USING_DMA
+                default n
+        endif
+
+    menuconfig BSP_USING_I2C1
+        bool "Enable I2C1 BUS (software simulation)"
+        default n
+        select RT_USING_I2C
+        select RT_USING_I2C_BITOPS
+        select RT_USING_PIN
+        if BSP_USING_I2C1
+            config BSP_I2C1_SCL_PIN
+                int "i2c1 scl pin number"
+                range 0 63
+                default 22
+            config BSP_I2C1_SDA_PIN
+                int "I2C1 sda pin number"
+                range 0 63
+                default 23
+        endif
+
+    menuconfig BSP_USING_ADC
+        bool "Enable ADC"
+        default n
+        select RT_USING_ADC
+        if BSP_USING_ADC
+            config BSP_USING_ADC1
+                bool "Enable ADC1"
+                default n
+        endif
+
+    config BSP_USING_ON_CHIP_FLASH
+        bool "Enable on-chip FLASH"
+        default n 
+
+    menuconfig BSP_USING_ONCHIP_RTC
+        bool "Enable RTC"
+        select RT_USING_RTC
+        select RT_USING_LIBC
+        default n
+        if BSP_USING_ONCHIP_RTC
+            choice
+                prompt "Select clock source"
+                default BSP_RTC_USING_LSE
+
+                config BSP_RTC_USING_LSE
+                    bool "RTC USING LSE"
+
+                config BSP_RTC_USING_LSI
+                    bool "RTC USING LSI"
+            endchoice
+        endif
+
+    config BSP_USING_WDT
+        bool "Enable Watchdog Timer"
+        select RT_USING_WDT
+        default n
+
+	menuconfig BSP_USING_CRC
+		bool "Enable CRC"
+		select RT_USING_HWCRYPTO
+		select RT_HWCRYPTO_USING_CRC
+		default n
+		if BSP_USING_CRC
+			config BSP_USING_HARDWARE_CRC32
+				bool "Enable Hardware CRC32(0x04C11DB7)"
+				select RT_HWCRYPTO_USING_CRC_04C11DB7
+				default n
+				
+			config BSP_USING_SOFTWARE_CRC16
+				bool "Enable Software CRC16(0x8005)"
+				default n
+		endif
+		
+		
+    menuconfig BSP_USING_PULSE_ENCODER
+        bool "Enable Pulse Encoder"
+        default n
+        select RT_USING_PULSE_ENCODER
+        if BSP_USING_PULSE_ENCODER
+            config BSP_USING_PULSE_ENCODER3
+                bool "Enable Pulse Encoder3"
+                default n
+
+        endif
+
+ source "libraries/HAL_Drivers/Kconfig"
+    
+endmenu
+
+menu "Board extended module Drivers"
+
+    config BSP_USING_BDS_GPS_UART_NAME
+        depends on BSP_USING_UART
+        string "Uart Name of BDS_GPS Use"
+        default "uart3"
+    
+    config BSP_USING_BDS_GPS_UART_BAUD
+        depends on BSP_USING_UART
+        int "Baudrate of BDS_GPS"
+        default 9600
+
+    config BSP_USING_BDS_GPS_UART_BUFFER_SIZE
+        depends on BSP_USING_UART
+        int "Buffer Size of BDS_GPS"
+        default 50
+endmenu
+
+menu "Device Runner Parameter"
+
+    config BSP_USE_MQTT_IP
+        string "MQTT server IP"
+        default "tcp://39.104.238.231:1883"
+    
+    config BSP_USE_MQTT_USERNAME
+        string "MQTT connect username"
+        default ""
+    
+    config BSP_USE_MQTT_PASSWORD
+        string "MQTT connect password"
+        default ""
+
+    config BSP_USE_MQTT_TOPIC
+        string "MQTT Subscribe to the topic"
+        default "nongye/develop/iot/cmd"
+
+    config BSP_USE_MQTT_PUBLIC_TOPIC
+        string "MQTT public topic"
+        default "nongye/develop/iot/bus485_sensor"
+    
+    config BSP_USE_MQTT_DEBUG
+        bool "BSP MQTT Debug"
+        default n
+
+    config BSP_DEV_RUN_USE_SECTION_NAME
+        depends on FAL_USING_SFUD_PORT
+        string "the sector name of save device run parameter"
+        default "easyflash"
+
+    config BSP_DEV_RUN_USE_SECTION_OFFSET
+        depends on FAL_USING_SFUD_PORT
+        int "the sector offset of save device run parameter"
+        default 0
+
+    config BSP_GET_UPDATE_URI_HEADER
+        depends on RT_USING_NETDEV
+        string "update firmware use uri header"
+        default "http://39.104.238.231:8012/firmware/"
+
+    config BSP_FIRMWARE_HTTP_OTA_BUFF_LEN
+        depends on FAL_USING_SFUD_PORT
+        int "http ota use buffer size"
+        default 1024
+
+    config BSP_FIRMWARE_HTTP_OTA_GET_HEADER_BUFSZ
+        depends on FAL_USING_SFUD_PORT
+        int "http ota get header use buffer size"
+        default 512
+    
+    config BSP_FIRMWARE_UPDATE_FILE_NAME_LEN
+        depends on FAL_USING_SFUD_PORT
+        int "the buffer size of cache download file name"
+        default 50
+
+    config BSP_SAVE_FIRMWARE_SECTOR
+        depends on FAL_USING_SFUD_PORT
+        string "the sector name of save firmware"
+        default "download"
+    
+    config BSP_FIRMWARE_USE_SECTION_OFFSET
+        depends on FAL_USING_SFUD_PORT
+        int "the sector offset of save firmware"
+        default 0
+    
+    config BSP_USE_CHECK_FIRMWARE_CMD
+        depends on FAL_USING_SFUD_PORT
+        bool "Use check_fir cmd to check sector firmware"
+        default n
+
+    config BSP_DEV_RUN_USE_DARGC_CMD
+        bool "Use dargc cmd to output device run parameter"
+        default n
+
+
+endmenu
+
+endmenu
